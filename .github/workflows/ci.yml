@@ -2,11 +2,11 @@ name: compile
 
 on: 
   workflow_dispatch:
-    push:
-    pull_request:
-    release:
-      types:
-        - published
+      push:
+      pull_request:
+      release:
+        types:
+          - published
 
 env:
   VERSION: 2.7.5
