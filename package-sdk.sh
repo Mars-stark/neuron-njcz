@@ -35,40 +35,7 @@ mkdir -p $package_name/lib
 mkdir -p $package_name/config
 mkdir -p $package_name/plugins/schema
 
-cp sdk-install.sh ${package_name}/
-cp neuron.conf ${package_name}/
-cp cmake/neuron-config.cmake ${package_name}/
-cp -r include/* ${package_name}/include/
 cp -r build/ ${package_name}/build
-cp -r build/dist ${package_name}/
-
-cp build/neuron ${package_name}
-cp build/libneuron-base.so ${package_name}/lib
-cp /usr/local/lib/libzlog.so.1.2 ${package_name}/lib
-
-cp persistence/*.sql ${package_name}/config/
-
-cp sdk-zlog.conf ${package_name}/config/
-cp zlog.conf ${package_name}/config/
-cp dev.conf ${package_name}/config/
-cp neuron.key ${package_name}/config/
-cp neuron.pem ${package_name}/config/
-cp default_plugins.json ${package_name}/config/
-cp neuron.json ${package_name}/config/
-
-cp build/plugins/schema/ekuiper.json \
-    build/plugins/schema/monitor.json \
-    build/plugins/schema/mqtt.json \
-    build/plugins/schema/modbus-tcp.json \
-    build/plugins/schema/file.json \
-    ${package_name}/plugins/schema/
-
-cp build/plugins/libplugin-ekuiper.so \
-    build/plugins/libplugin-monitor.so \
-    build/plugins/libplugin-mqtt.so \
-    build/plugins/libplugin-modbus-tcp.so \
-    build/plugins/libplugin-file.so \
-    ${package_name}/plugins/
 
 tar czf ${package_name}-${arch}.tar.gz ${package_name}/
 ls ${package_name}
