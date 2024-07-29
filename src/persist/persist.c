@@ -800,11 +800,11 @@ int neu_persister_store_tag(const char *driver_name, const char *group_name,
     int   rv      = execute_sql(global_db,
                          "INSERT INTO tags ("
                          " driver_name, group_name, name, address, attribute,"
-                         " precision, type, decimal, description, value"
-                         ") VALUES (%Q, %Q, %Q, %Q, %i, %i, %i, %lf, %Q, %Q)",
+                         " precision, type, decimal, description, value ,offsets"
+                         ") VALUES (%Q, %Q, %Q, %Q, %i, %i, %i, %lf, %Q, %Q, %i)",
                          driver_name, group_name, tag->name, tag->address,
                          tag->attribute, tag->precision, tag->type,
-                         tag->decimal, tag->description, val_str);
+                         tag->decimal, tag->description, val_str,tag->offsets);
 
     if (0 == rv) {
         tag_count_add(1);
@@ -856,6 +856,12 @@ static int put_tags(const char *query, sqlite3_stmt *stmt,
                        tag->decimal, sqlite3_errmsg(global_db));
             return -1;
         }
+        if (SQLITE_OK != sqlite3_bind_int(stmt, 11, tag->offsets)) {
+            nlog_error("bind `%s` with offsets=`%i` fail: %s", query,
+                       tag->offsets, sqlite3_errmsg(global_db));
+            return -1;
+        }
+
 
         if (SQLITE_OK !=
             sqlite3_bind_text(stmt, 9, tag->description, -1, NULL)) {
@@ -890,8 +896,8 @@ int neu_persister_store_tags(const char *driver_name, const char *group_name,
     sqlite3_stmt *stmt  = NULL;
     const char *  query = "INSERT INTO tags ("
                         " driver_name, group_name, name, address, attribute,"
-                        " precision, type, decimal, description, value"
-                        ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)";
+                        " precision, type, decimal, description, value,offsets"
+                        ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)";
 
     if (SQLITE_OK != sqlite3_exec(global_db, "BEGIN", NULL, NULL, NULL)) {
         nlog_error("begin transaction fail: %s", sqlite3_errmsg(global_db));
@@ -947,6 +953,7 @@ static int collect_tag_info(sqlite3_stmt *stmt, UT_array **tags)
             .type        = sqlite3_column_int(stmt, 4),
             .decimal     = sqlite3_column_double(stmt, 5),
             .description = (char *) sqlite3_column_text(stmt, 6),
+            .offsets     = sqlite3_column_int(stmt, 7),
         };
         utarray_push_back(*tags, &tag);
         if (neu_tag_attribute_test(&tag, NEU_ATTRIBUTE_STATIC)) {
@@ -969,7 +976,7 @@ int neu_persister_load_tags(const char *driver_name, const char *group_name,
 {
     sqlite3_stmt *stmt  = NULL;
     const char *  query = "SELECT name, address, attribute, precision, type, "
-                        "decimal, description, value "
+                        "decimal, description, value ,offsets"
                         "FROM tags WHERE driver_name=? AND group_name=? "
                         "ORDER BY rowid ASC";
 
@@ -1013,11 +1020,11 @@ int neu_persister_update_tag(const char *driver_name, const char *group_name,
     int   rv      = execute_sql(global_db,
                          "UPDATE tags SET"
                          " address=%Q, attribute=%i, precision=%i, type=%i,"
-                         " decimal=%lf, description=%Q, value=%Q "
+                         " decimal=%lf, description=%Q, value=%Q, offsets=%i "
                          "WHERE driver_name=%Q AND group_name=%Q AND name=%Q",
                          tag->address, tag->attribute, tag->precision,
                          tag->type, tag->decimal, tag->description, val_str,
-                         driver_name, group_name, tag->name);
+                         driver_name, group_name, tag->name,tag->offsets);
     free(val_str);
     return rv;
 }
@@ -1559,8 +1566,8 @@ int neu_persister_store_template_tags(const char *         tmpl_name,
     sqlite3_stmt *stmt    = NULL;
     const char *  query   = "INSERT INTO template_tags ("
                         " tmpl_name, group_name, name, address, attribute,"
-                        " precision, type, decimal, description, value"
-                        ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)";
+                        " precision, type, decimal, description, value,offsets"
+                        ") VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)";
 
     if (SQLITE_OK != sqlite3_exec(global_db, "BEGIN", NULL, NULL, NULL)) {
         nlog_error("begin transaction fail: %s", sqlite3_errmsg(global_db));
@@ -1609,7 +1616,7 @@ int neu_persister_load_template_tags(const char *tmpl_name,
 {
     sqlite3_stmt *stmt  = NULL;
     const char *  query = "SELECT name, address, attribute, precision, type, "
-                        "decimal, description, value "
+                        "decimal, description, value ,offsets"
                         "FROM template_tags WHERE tmpl_name=? AND group_name=? "
                         "ORDER BY rowid ASC";
 
@@ -1653,7 +1660,7 @@ int neu_persister_update_template_tags(const char *         tmpl_name,
     sqlite3_stmt *stmt  = NULL;
     const char *  query = "UPDATE template_tags SET"
                         "  address=?4, attribute=?5, precision=?6, type=?7,"
-                        "  decimal=?8, description=?9, value=?10 "
+                        "  decimal=?8, description=?9, value=?10, offsets=?11 "
                         "WHERE tmpl_name=?1 AND group_name=?2 AND name=?3";
 
     if (SQLITE_OK != sqlite3_exec(global_db, "BEGIN", NULL, NULL, NULL)) {

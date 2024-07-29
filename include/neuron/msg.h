@@ -1126,6 +1126,7 @@ neu_tag_value_to_json_paginate(neu_resp_tag_value_meta_paginate_t *tag_value,
     tag_json->datatag.type        = tag_value->datatag.type;
     tag_json->datatag.precision   = tag_value->datatag.precision;
     tag_json->datatag.decimal     = tag_value->datatag.decimal;
+    tag_json->datatag.offsets     = tag_value->datatag.offsets;
     tag_json->datatag.description = strdup(tag_value->datatag.description);
     tag_json->datatag.option      = tag_value->datatag.option;
     memcpy(tag_json->datatag.meta, tag_value->datatag.meta,

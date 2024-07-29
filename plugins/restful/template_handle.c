@@ -238,7 +238,6 @@ void handle_get_template_resp(nng_aio *aio, neu_resp_get_template_t *resp)
         // no groups
         goto end;
     }
-
     grp = calloc(resp->n_group, sizeof(*grp));
     if (NULL == grp) {
         rv = NEU_ERR_EINTERNAL;
@@ -261,7 +260,7 @@ void handle_get_template_resp(nng_aio *aio, neu_resp_get_template_t *resp)
             rv = NEU_ERR_EINTERNAL;
             goto end;
         }
-
+        
         for (int j = 0; j < tags.len; ++j) {
             neu_datatag_t *tag       = &resp->groups[i].tags[j];
             tags.tags[j].name        = tag->name;

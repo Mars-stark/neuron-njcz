@@ -236,7 +236,6 @@ void handle_update_tags(nng_aio *aio)
             cmd.tags  = calloc(req->n_tag, sizeof(neu_datatag_t));
 
             for (int i = 0; i < req->n_tag; i++) {
-                printf("update The int64_t value is: %" PRId64 "\n", req->tags[i].offsets);
                 cmd.tags[i].offsets   = req->tags[i].offsets;
                 cmd.tags[i].attribute = req->tags[i].attribute;
                 cmd.tags[i].type      = req->tags[i].type;
