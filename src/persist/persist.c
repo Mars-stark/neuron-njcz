@@ -1020,11 +1020,11 @@ int neu_persister_update_tag(const char *driver_name, const char *group_name,
     int   rv      = execute_sql(global_db,
                          "UPDATE tags SET"
                          " address=%Q, attribute=%i, precision=%i, type=%i,"
-                         " decimal=%lf, description=%Q, value=%Q, offsets=%i "
+                         " decimal=%lf, description=%Q, value=%Q ,offsets=%i"
                          "WHERE driver_name=%Q AND group_name=%Q AND name=%Q",
                          tag->address, tag->attribute, tag->precision,
-                         tag->type, tag->decimal, tag->description, val_str,
-                         driver_name, group_name, tag->name,tag->offsets);
+                         tag->type, tag->decimal, tag->description, val_str,tag->offsets,
+                         driver_name, group_name, tag->name);
     free(val_str);
     return rv;
 }

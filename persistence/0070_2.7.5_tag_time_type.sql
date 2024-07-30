@@ -29,7 +29,7 @@ CREATE TABLE
     attribute INTEGER NOT NULL check (attribute BETWEEN 0 AND 15),
     precision INTEGER NOT NULL check (precision BETWEEN 0 AND 17),
     decimal REAL NOT NULL,
-    offsets REAL NOT NULL,
+    offsets INTEGER NOT NULL,
     type INTEGER NOT NULL check (type BETWEEN 0 AND 21),
     description TEXT NULL check (length (description) <= 512),
     value TEXT,

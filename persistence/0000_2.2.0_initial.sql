@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS
     attribute INTEGER NOT NULL check(attribute BETWEEN 0 AND 7),
     precision INTEGER NOT NULL check(precision BETWEEN 0 AND 17),
     decimal REAL NOT NULL,
-    offsets REAL NOT NULL,
+    offsets INTEGER NOT NULL,
     type INTEGER NOT NULL check(type BETWEEN 0 AND 15),
     description TEXT NULL check(length(description) <= 128),
     UNIQUE (driver_name, group_name, name),
